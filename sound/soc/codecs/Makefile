@@ -217,3 +217,5 @@ obj-$(CONFIG_SND_SOC_TPA2051D3)	+= tpa2051d3.o
 
 # Hack
 obj-$(CONFIG_SOUND_CONTROL_HAX_GPL) += sound_control_gpl.o
+obj-$(CONFIG_SOUND_CONTROL_HAX_3_GPL) += sound_control_3_gpl.o
+
