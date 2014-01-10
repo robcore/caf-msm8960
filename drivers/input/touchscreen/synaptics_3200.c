@@ -33,6 +33,10 @@
 #include <linux/input/mt.h>
 #include <linux/pl_sensor.h>
 
+#ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
+#include <linux/cm3629.h>
+#endif
+
 #define SYN_I2C_RETRY_TIMES 10
 #define SHIFT_BITS 10
 #define SYN_WIRELESS_DEBUG
@@ -143,7 +147,7 @@ extern unsigned int get_tamper_sf(void);
 #ifdef CONFIG_TOUCHSCREEN_SYNAPTICS_SWEEP2WAKE
 
 int s2w_switch = 1;
-int dt2w_switch = 0;
+int dt2w_switch = 1;
 int pocket_detect = 1;
 int s2w_wakestat = 0;
 cputime64_t dt2w_time[2] = {0, 0}; 
@@ -178,11 +182,11 @@ static void sweep2wake_presspwr(struct work_struct * sweep2wake_presspwr_work) {
 
 	   	if (!mutex_trylock(&pwrkeyworklock))
 			return;
-		input_event(sweep2wake_pwrdev, EV_KEY, KEY_POWER, 1);
-		input_event(sweep2wake_pwrdev, EV_SYN, 0, 0);
+		input_report_key(sweep2wake_pwrdev, KEY_POWER, 1);
+		input_sync(sweep2wake_pwrdev);
 		msleep(80);
-		input_event(sweep2wake_pwrdev, EV_KEY, KEY_POWER, 0);
-		input_event(sweep2wake_pwrdev, EV_SYN, 0, 0);
+		input_report_key(sweep2wake_pwrdev, KEY_POWER, 0);
+		input_sync(sweep2wake_pwrdev);
 		msleep(80);
 		mutex_unlock(&pwrkeyworklock);
 		return;
